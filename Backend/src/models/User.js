@@ -22,18 +22,14 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
-  notes: [
-    {
+  notes: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Note"
-    }
-  ],
-  quizzes: [
-    {
+    }],
+  quizzes: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Quiz"
-    }
-  ]
+    }]
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);
