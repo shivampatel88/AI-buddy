@@ -23,7 +23,7 @@ res.json({ cards });
 
 export async function quiz(req, res) {
 try {
-const { text, count = 8 } = req.body;
+const { text, count = 10 } = req.body;
 const prompt = `Generate ${count} MCQs from the TEXT. Each item: {"question":"...","options":["A","B","C","D"],"answer":"B","explanation":"..."}. Only JSON array, no prose.\n\nTEXT:\n${text}`;
 const raw = await callLLM(prompt);
 const match = raw.match(/\[([\s\S]*)\]/);
