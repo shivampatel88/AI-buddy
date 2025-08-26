@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const PROVIDERS = {
     GEMENI : async({prompt}) => {
-        const API_KEY = process.env.GEMENI_API_KEY;
-        const MODEL = process.env.GEMENI_MODEL;
-        const res = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+        const API_KEY = process.env.GEMINI_API_KEY;
+        const MODEL = process.env.GEMINI_MODEL;
+        const res = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
 { contents: [{ parts: [{ text: prompt }] }] }
 );
 return res.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';

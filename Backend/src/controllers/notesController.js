@@ -2,12 +2,9 @@ import multer from 'multer';
 import { extractTextFromPDF } from '../utils/pdfParser.js';
 import Note from '../models/Note.js';
 
-
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
-
 export const uploadMiddleware = upload.single('file');
-
 
 export async function uploadPDF(req, res) {
 try {
