@@ -9,6 +9,8 @@ export const signup = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
+  const { firstname, lastname, email, password } = req.body;
+
   try {
     let user = await User.findOne({ email });
     if (user) {
@@ -16,13 +18,11 @@ export const signup = async (req, res) => {
     }
 
     user = new User({firstname,lastname,email,password,});
-
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
 
     await user.save();
 
-    //Create and return a JWT
     const payload = {user: {id: user.id}};
 
     jwt.sign(payload,process.env.JWT_SECRET,{ expiresIn: '7d' },(err, token) => {
@@ -31,7 +31,7 @@ export const signup = async (req, res) => {
       }
     );
   } catch (error) {
-    console.error(error.message);
+    console.error("Signup Error:", error);
     res.status(500).send('Server error');
   }
 };
@@ -55,7 +55,6 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials.' });
     }
 
-    // 4. If credentials are correct, create and return a JWT
     const payload = {user: {id: user.id}};
 
     jwt.sign(payload,process.env.JWT_SECRET,{ expiresIn: '7d' },(err, token) => {

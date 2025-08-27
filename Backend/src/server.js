@@ -3,12 +3,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import winston from 'winston';
-
+dotenv.config({ path: "../.env" });
 import authRoutes from './routes/authRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import quizRoutes from './routes/quizRoutes.js'; 
-dotenv.config();
+
 
 const app = express();
 

@@ -8,6 +8,6 @@ router.use(authMiddleware);
 
 router.post('/generate', generateQuiz);
 router.get('/', getUserQuizzes);
-router.post('/submit', submitQuiz); s
+router.post('/submit', submitQuiz); 
 
 export default router;
