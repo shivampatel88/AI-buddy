@@ -11,7 +11,18 @@ try {
 const buffer = req.file?.buffer;
 if (!buffer) return res.status(400).json({ error: 'No file received' });
 const text = await extractTextFromPDF(buffer);
-const note = await Note.create({ textContent: text });
+const note = await Note.create({ textContent: text , user: req.user.id});
+
 res.json({ noteId: note._id, text });
 } catch (e) { res.status(500).json({ error: e.message }); }
 }
+
+export const getNotes = async (req, res) => {
+  try {
+    const notes = await Note.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json(notes);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server Error');
+  }
+};

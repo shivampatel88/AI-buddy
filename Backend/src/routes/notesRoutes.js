@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import { uploadPDF, uploadMiddleware } from '../controllers/notesController.js';
-import { authMiddleware } from '../middlewares/auth.js'; // <-- Import auth middleware
+import { uploadPDF, uploadMiddleware, getNotes } from '../controllers/notesController.js';
+import { authMiddleware } from '../middlewares/auth.js'; 
 
 const router = Router();
+
+router.get('/', authMiddleware, getNotes);
 router.post('/upload', authMiddleware,uploadMiddleware, uploadPDF);
 export default router;
 
