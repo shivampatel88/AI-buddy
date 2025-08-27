@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import apiClient from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Layers } from 'lucide-react';
-import './Flashcard.css'; // We will create this CSS file
+import './FlashCard.css'; // We will create this CSS file
 
 export default function FlashcardView({ textContent }) {
   const [cards, setCards] = useState([]);
@@ -62,15 +62,14 @@ export default function FlashcardView({ textContent }) {
       {cards.length > 0 && (
         <>
           <div className="flashcard-container" onClick={() => setIsFlipped(!isFlipped)}>
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
               <motion.div
                 key={currentIndex}
                 className={`flashcard ${isFlipped ? 'is-flipped' : ''}`}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-              >
+                transition={{ duration: 0.3 }}>
                 <div className="flashcard-face flashcard-front">{cards[currentIndex].q}</div>
                 <div className="flashcard-face flashcard-back">{cards[currentIndex].a}</div>
               </motion.div>

@@ -28,8 +28,7 @@ export default function SummaryView({ textContent }) {
         <button
           onClick={handleGenerateSummary}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-sm hover:bg-indigo-700 disabled:bg-indigo-400 transition"
-        >
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-sm hover:bg-indigo-700 disabled:bg-indigo-400 transition">
           <Sparkles size={16} />
           {loading ? 'Generating...' : 'Generate Summary'}
         </button>
@@ -38,7 +37,7 @@ export default function SummaryView({ textContent }) {
       {error && <p className="mt-4 text-red-500">{error}</p>}
       {summary && (
         <div className="mt-4 prose prose-slate max-w-none">
-            {summary.split('\n').map((paragraph, index) => (
+            {summary.split('\n').filter(p => p.trim() !== '').map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>
             ))}
         </div>

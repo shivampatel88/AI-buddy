@@ -2,40 +2,35 @@ import Quiz from "../models/Quiz.js";
 import Quizresults from "../models/Quizresults.js";
 import { callLLM } from "../utils/llmProvider.js";
 
+function extractJson(str) {
+    const match = str.match(/\[[\s\S]*\]|{[\s\S]*}/);
+    if (match) {
+        try {
+            return JSON.parse(match[0]);
+        } catch (e) {
+            return null;
+        }
+    }
+    return null;
+}
+
 export const generateQuiz = async (req, res) => {
   try {
-    const { noteId, notesText } = req.body;
+    const { noteId, notesText,count =10 } = req.body;
     if (!notesText) {
       return res.status(400).json({ message: "Notes text is required" });
     }
 
-    const prompt = `Create 10 multiple-choice quiz questions (with 4 options each, and one correct answer)
-      from the following notes:
-      ${notesText}
-
-      Format strictly in JSON as:
-      [{
-          "question": "string",
-          "options": ["string1","string2","string3","string4"],
-          "answer": "string"
-        }]`;
-
+    const prompt = `Create ${count} multiple-choice quiz questions from the following notes. Format strictly in a valid JSON array: [{"question": "string", "options": ["string1","string2","string3","string4"], "answer": "string"}]`;
     const llmResponse = await callLLM(prompt);
 
-    let quizData;
-    try {
-      quizData = JSON.parse(llmResponse);
-    } catch (error) {
-      return res.status(500).json({
-        message: "Failed to parse quiz data from LLM",
-        rawResponse: llmResponse,
-      });
+    const quizData = extractJson(llmResponse);
+    if (!quizData) {
+        return res.status(500).json({ message: "Failed to parse quiz data from AI.", rawResponse: llmResponse });
     }
 
     const quiz = new Quiz({
-      userId: req.user.id,
-      noteId,
-      questions: quizData,
+      userId: req.user.id,noteId,questions: quizData,
     });
     await quiz.save();
 

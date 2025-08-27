@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const PROVIDERS = {
-    GEMENI : async({prompt}) => {
+    GEMINI : async({prompt}) => {
         const API_KEY = process.env.GEMINI_API_KEY;
         const MODEL = process.env.GEMINI_MODEL;
         const res = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
