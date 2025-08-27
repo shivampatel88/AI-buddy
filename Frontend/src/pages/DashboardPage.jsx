@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LayoutDashboard, Book, Settings, LogOut, Upload, Plus, FileText, BrainCircuit, Layers } from 'lucide-react';
 import apiClient from '../services/api';
+import UploadModal from '../components/UploadModal';
 
 const Logo = () => (
   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -18,18 +19,26 @@ export default function DashboardPage() {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const notesResponse = await apiClient.get('/notes');
+        setNotes(notesResponse.data);
+      } catch  {
+        setError('Failed to fetch notes.');
+      }
+    };
+
+   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const userResponse = await apiClient.get('/auth/me');
-        const notesResponse = await apiClient.get('/notes');
         setUser(userResponse.data);
-        setNotes(notesResponse.data);
-
+        await fetchNotes();
       } catch (err) {
-        setError('Failed to fetch data. Please try again.');
-        console.error(err);
+        setError('Failed to fetch data. Please try logging in again.');
         if (err.response && err.response.status === 401) {
             localStorage.removeItem('token');
             navigate('/login');
@@ -38,18 +47,22 @@ export default function DashboardPage() {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, []);
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
 
-  return (
+  return (<>
+      <UploadModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onUploadSuccess={fetchNotes} // <-- Pass the function to refresh notes
+      />
     <div className="flex min-h-screen bg-slate-50">
-      {/* Sidebar Navigation */}
+    
       <aside className="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col">
         <div className="flex items-center gap-3 p-6 border-b border-slate-200">
           <Logo />
@@ -78,7 +91,8 @@ export default function DashboardPage() {
               </h1>
               <p className="text-slate-500 mt-1">Let's get back to your study materials.</p>
             </div>
-            <button className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition">
+            <button onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition">
               <Upload size={18} />
               Upload New Note
             </button>
@@ -131,5 +145,6 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
+    </>
   );
 }
