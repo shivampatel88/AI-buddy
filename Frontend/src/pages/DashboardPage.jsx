@@ -30,6 +30,10 @@ export default function DashboardPage() {
       } catch (err) {
         setError('Failed to fetch data. Please try again.');
         console.error(err);
+        if (err.response && err.response.status === 401) {
+            localStorage.removeItem('token');
+            navigate('/login');
+        }
       } finally {
         setLoading(false);
       }
@@ -56,14 +60,6 @@ export default function DashboardPage() {
             <LayoutDashboard size={20} />
             Dashboard
           </a>
-          <a href="#" className="flex items-center gap-3 px-4 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg">
-            <Book size={20} />
-            My Notes
-          </a>
-          <a href="#" className="flex items-center gap-3 px-4 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg">
-            <Settings size={20} />
-            Settings
-          </a>
         </nav>
         <div className="p-4 border-t border-slate-200">
             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg">
@@ -73,7 +69,6 @@ export default function DashboardPage() {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 p-8">
         <div className="max-w-5xl mx-auto">
           <header className="flex items-center justify-between mb-10">
@@ -89,7 +84,6 @@ export default function DashboardPage() {
             </button>
           </header>
 
-          {/* Recent Notes Section */}
           <section>
             <h2 className="text-xl font-bold text-slate-800 mb-4">Your Recent Notes</h2>
             
@@ -100,37 +94,27 @@ export default function DashboardPage() {
               <div className="space-y-4">
                 {notes.length > 0 ? (
                   notes.map((note, index) => (
-                    <motion.div
-                      key={note._id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                      className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="bg-slate-100 p-3 rounded-lg">
-                            <FileText className="text-slate-500" size={20} />
-                        </div>
-                        <div>
-                            <p className="font-semibold text-slate-800">
-                                {note.textContent.substring(0, 50)}...
-                            </p>
-                            <p className="text-sm text-slate-500">
-                                Created on: {new Date(note.createdAt).toLocaleDateString()}
-                            </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button className="px-3 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-md hover:bg-indigo-100">
-                            <BrainCircuit size={14} className="inline mr-1"/>
-                            Summary
-                        </button>
-                        <button className="px-3 py-1.5 text-xs font-semibold text-purple-600 bg-purple-50 rounded-md hover:bg-purple-100">
-                            <Layers size={14} className="inline mr-1"/>
-                            Flashcards
-                        </button>
-                      </div>
-                    </motion.div>
+                    <Link to={`/note/${note._id}`} key={note._id}>
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                          className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between hover:border-indigo-500 hover:shadow-md transition-all" >
+                          <div className="flex items-center gap-4">
+                            <div className="bg-slate-100 p-3 rounded-lg">
+                                <FileText className="text-slate-500" size={20} />
+                            </div>
+                            <div>
+                                <p className="font-semibold text-slate-800">
+                                    {note.textContent.substring(0, 80)}...
+                                </p>
+                                <p className="text-sm text-slate-500">
+                                    Created on: {new Date(note.createdAt).toLocaleDateString()}
+                                </p>
+                            </div>
+                          </div>
+                        </motion.div>
+                    </Link>
                   ))
                 ) : (
                   <div className="text-center py-16 border-2 border-dashed border-slate-200 rounded-xl">
