@@ -6,7 +6,7 @@ export default function QuizView({ textContent, noteId }) {
   const [quiz, setQuiz] = useState(null); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [count, setCount] = useState(5);
+  const [count, setCount] = useState(10);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [quizFinished, setQuizFinished] = useState(false);
@@ -19,13 +19,12 @@ export default function QuizView({ textContent, noteId }) {
     setQuizFinished(false);
     setSelectedAnswers({});
     try {
-      // Use the dedicated quiz generation endpoint, passing the noteId
       const response = await apiClient.post('/quizzes/generate', {
         notesText: textContent,
         noteId: noteId,
         count: count,
       });
-      setQuiz(response.data.quiz); // Save the entire quiz object
+      setQuiz(response.data.quiz); 
       setCurrentQuestionIndex(0);
     } catch {
       setError('Failed to generate quiz.');
@@ -57,18 +56,28 @@ export default function QuizView({ textContent, noteId }) {
       setScore(finalScore);
       setQuizFinished(true);
 
-      // --- Use noteId to submit the score to the backend ---
       try {
         await apiClient.post('/quizzes/submit', {
-          quizId: quiz._id, // Use the ID from the generated quiz
+          quizId: quiz._id, 
           userAnswers: userAnswers,
         });
       } catch (err) {
-        // Optionally, show an error if submission fails
         console.error("Failed to submit quiz results.", err);
       }
     }
   };
+  const handleCountChange = (e) => {
+    const value = parseInt(e.target.value, 10);
+
+    // --- THIS IS THE FIX ---
+    // If the value is not a number or is less than 1, set it to 1.
+    // Otherwise, use the entered value.
+    if (isNaN(value) || value < 1) {
+      setCount(1);
+    } else {
+      setCount(value);
+    }
+  }
   
   if (quizFinished) {
     return (
@@ -88,10 +97,10 @@ export default function QuizView({ textContent, noteId }) {
         <h3 className="text-lg font-bold">Quiz</h3>
         {!quiz && (
             <div className="flex items-center gap-2">
-                <input type="number" value={count} onChange={(e) => setCount(parseInt(e.target.value, 10))} className="w-20 p-2 border border-slate-300 rounded-md"/>
+              <input type="number" value={count} min="1" className="w-20 p-2 border border-slate-300 rounded-md"/>
                 <button onClick={handleGenerate} disabled={loading} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-sm hover:bg-green-700 disabled:bg-green-400 transition">
                     <CheckSquare size={16} />
-                    {loading ? 'Generating...' : 'Start Quiz'}
+                    {loading ? 'Generating...' : 'Start Quizz'}
                 </button>
             </div>
         )}

@@ -73,7 +73,7 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="modal-content"
+            className="modal-content professional-card modal-content"
           >
             <div className="modal-header">
               <h3 className="text-lg font-semibold">Upload New Note</h3>

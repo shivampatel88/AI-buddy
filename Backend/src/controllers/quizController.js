@@ -21,7 +21,7 @@ export const generateQuiz = async (req, res) => {
       return res.status(400).json({ message: "Notes text is required" });
     }
 
-    const prompt = `Create ${count} multiple-choice quiz questions from the following notes. Format strictly in a valid JSON array: [{"question": "string", "options": ["string1","string2","string3","string4"], "answer": "string"}]`;
+    const prompt = `Create ${count} multiple-choice quiz questions from the following notes. ---${notesText}--- Format strictly in a valid JSON array: [{"question": "string", "options": ["string1","string2","string3","string4"], "answer": "string"}]`;
     const llmResponse = await callLLM(prompt);
 
     const quizData = extractJson(llmResponse);
@@ -30,7 +30,7 @@ export const generateQuiz = async (req, res) => {
     }
 
     const quiz = new Quiz({
-      userId: req.user.id,noteId,questions: quizData,
+      user: req.user.id,noteId,questions: quizData,
     });
     await quiz.save();
 
@@ -43,7 +43,7 @@ export const generateQuiz = async (req, res) => {
 
 export const getUserQuizzes = async (req, res) => {
   try {
-    const quizzes = await Quiz.find({ userId: req.user.id }).populate("noteId");
+    const quizzes = await Quiz.find({ user: req.user.id }).populate("noteId");
     res.json(quizzes);
   } catch (error) {
     console.error("Error fetching quizzes:", error.message);
@@ -54,7 +54,7 @@ export const getUserQuizzes = async (req, res) => {
 export const submitQuiz = async (req, res) => {
   try {
     const { quizId, userAnswers } = req.body; 
-    const userId = req.user.id;
+    const user = req.user.id;
 
     const quiz = await Quiz.findById(quizId);
     if (!quiz) {
@@ -70,7 +70,7 @@ export const submitQuiz = async (req, res) => {
     });
 
     const quizResult = new Quizresults({
-      user: userId,
+      user: user,
       quiz: quizId,
       score,
       totalQuestions: quiz.questions.length,
