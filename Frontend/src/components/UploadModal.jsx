@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, UploadCloud, File, CheckCircle } from 'lucide-react';
 import apiClient from '../services/api';
-import './UploadModal.css'; // We'll create this CSS file
+import './UploadModal.css';
 
 export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
   const [file, setFile] = useState(null);
@@ -31,8 +31,7 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
     setIsSuccess(false);
 
     const formData = new FormData();
-    formData.append('file', file); // 'file' must match the name in your backend's uploadMiddleware
-
+    formData.append('file', file); 
     try {
       await apiClient.post('/notes/upload', formData, {
         headers: {
@@ -40,10 +39,10 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
         },
       });
       setIsSuccess(true);
-      onUploadSuccess(); // Refresh the notes list on the dashboard
+      onUploadSuccess();
       setTimeout(() => {
         handleClose();
-      }, 1500); // Close modal after a short delay on success
+      }, 1500);
     } catch (err) {
       setError('Upload failed. Please try again.');
       console.error(err);

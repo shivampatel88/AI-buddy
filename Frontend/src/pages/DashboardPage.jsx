@@ -59,8 +59,7 @@ export default function DashboardPage() {
       <UploadModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onUploadSuccess={fetchNotes} // <-- Pass the function to refresh notes
-      />
+        onUploadSuccess={fetchNotes} />
     <div className="flex min-h-screen bg-slate-50">
     
       <aside className="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col">

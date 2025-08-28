@@ -104,8 +104,6 @@ export default function HomePage() {
             </p>
         </div>
       </footer>
-      
-      {/* Simple CSS for the animation */}
       <style>{`
         .animate-blob {
           animation: blob 7s infinite;
