@@ -45,19 +45,18 @@ export default function FlashcardView({ textContent }) {
     <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
       <style>{`
         .flashcard-container {
-          perspective: 1000px; /* Creates the 3D space */
+          perspective: 1000px;
         }
         .flashcard {
-          transform-style: preserve-3d; /* Allows children to be positioned in 3D */
+          transform-style: preserve-3d; 
         }
         .flashcard-face {
-          backface-visibility: hidden; /* Hides the back of a card when it's not facing you */
+          backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
         }
         .flashcard-back {
-          transform: rotateY(180deg); /* Starts the back face already flipped around */
-        }
-      `}</style>
+          transform: rotateY(180deg);
+        }`}</style>
 
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold">Flashcards</h3>

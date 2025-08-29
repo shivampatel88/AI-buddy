@@ -50,8 +50,7 @@ export default function NoteDetailPage() {
         activeTab === tabName
           ? 'bg-indigo-600 text-white'
           : 'text-slate-600 hover:bg-slate-100'
-      }`}
-    >
+      }`}>
       {icon}
       {label}
     </button>

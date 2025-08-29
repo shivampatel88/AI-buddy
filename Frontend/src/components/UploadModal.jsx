@@ -65,15 +65,13 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="modal-backdrop"
-        >
+          className="modal-backdrop">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="modal-content professional-card modal-content"
-          >
+            className="modal-content professional-card modal-content">
             <div className="modal-header">
               <h3 className="text-lg font-semibold">Upload New Note</h3>
               <button onClick={handleClose} className="close-button">
@@ -90,8 +88,7 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
                       id="file-upload"
                       className="file-input"
                       onChange={handleFileChange}
-                      accept=".pdf"
-                    />
+                      accept=".pdf"/>
                     <label htmlFor="file-upload" className="file-label">
                       <span>Drag & drop or click to select a PDF</span>
                     </label>
@@ -106,8 +103,7 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
                   <button
                     onClick={handleUpload}
                     disabled={isUploading || !file}
-                    className="upload-button"
-                  >
+                    className="upload-button">
                     {isUploading ? 'Uploading...' : 'Upload & Process'}
                   </button>
                 </>
@@ -124,4 +120,4 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
       )}
     </AnimatePresence>
   );
-}
+} 

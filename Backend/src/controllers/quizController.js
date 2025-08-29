@@ -20,7 +20,7 @@ export const generateQuiz = async (req, res) => {
     if (!notesText) {
       return res.status(400).json({ message: "Notes text is required" });
     }
-
+    
     const prompt = `Create ${count} multiple-choice quiz questions from the following notes. ---${notesText}--- Format strictly in a valid JSON array: [{"question": "string", "options": ["string1","string2","string3","string4"], "answer": "string"}]`;
     const llmResponse = await callLLM(prompt);
 
