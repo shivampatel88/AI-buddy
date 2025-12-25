@@ -1,19 +1,18 @@
-import axios from 'axios';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const PROVIDERS = {
-    GEMINI : async({prompt}) => {
-        const API_KEY = process.env.GEMINI_API_KEY;
-        const MODEL = process.env.GEMINI_MODEL;
-        const res = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
-{ contents: [{ parts: [{ text: prompt }] }] }
-);
-return res.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY.trim());
+
+export async function callLLM(prompt, config = {}) {
+    try {
+        const model = genAI.getGenerativeModel({
+            model: process.env.GEMINI_MODEL.trim(),
+            generationConfig: config
+        });
+
+        const result = await model.generateContent(prompt);
+        return result.response.text();
+    } catch (error) {
+        console.error("Gemini SDK Error:", error);
+        throw new Error("Failed to generate content");
     }
-}
-
-export async function callLLM(prompt) {
-const provider = process.env.LLM_PROVIDER ;
-const fn = PROVIDERS[provider];
-if (!fn) throw new Error(`Unknown LLM provider: ${provider}`);
-return fn({ prompt });
 }

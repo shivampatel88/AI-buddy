@@ -10,14 +10,15 @@ const quizSchema = new mongoose.Schema({
     {
       question: { type: String, required: true },
       options: [{ type: String, required: true }],
-      answer: { type: String, required: true }
+      answer: { type: String, required: true },
+      explanation: { type: String, required: true }
     }
   ],
-  generatedFrom: {
+  noteId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Note"
+    ref: "Note",
+    required: true
   }
 }, { timestamps: true });
 
-const Quiz = mongoose.model("Quiz", quizSchema);
-export default Quiz;
+export default mongoose.model("Quiz", quizSchema);

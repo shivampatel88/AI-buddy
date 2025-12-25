@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, UploadCloud, File, CheckCircle } from 'lucide-react';
 import apiClient from '../services/api';
+import { handleApiError } from '../utils/errorHandler';
 import './UploadModal.css';
 
 export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
@@ -31,21 +32,16 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
     setIsSuccess(false);
 
     const formData = new FormData();
-    formData.append('file', file); 
+    formData.append('file', file);
     try {
-      await apiClient.post('/notes/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await apiClient.post('/notes/upload', formData);
       setIsSuccess(true);
       onUploadSuccess();
       setTimeout(() => {
         handleClose();
       }, 1500);
     } catch (err) {
-      setError('Upload failed. Please try again.');
-      console.error(err);
+      handleApiError(err, null, 'Upload failed. Please try again.');
     } finally {
       setIsUploading(false);
     }
@@ -82,13 +78,13 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
               {!isSuccess ? (
                 <>
                   <div className="file-drop-zone">
-                    <UploadCloud size={48} className="text-slate-400 mb-2" />
+                    <UploadCloud size={78} className="text-slate-400 mb-2" />
                     <input
                       type="file"
                       id="file-upload"
                       className="file-input"
                       onChange={handleFileChange}
-                      accept=".pdf"/>
+                      accept=".pdf" />
                     <label htmlFor="file-upload" className="file-label">
                       <span>Drag & drop or click to select a PDF</span>
                     </label>

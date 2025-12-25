@@ -5,6 +5,7 @@ import apiClient from '../services/api';
 import SummaryView from '../components/SummaryView';
 import FlashcardView from '../components/FlashcardView';
 import QuizView from '../components/QuizView';
+import { handleApiError } from '../utils/errorHandler';
 
 export default function NoteDetailPage() {
   const { noteId } = useParams();
@@ -18,8 +19,8 @@ export default function NoteDetailPage() {
       try {
         const response = await apiClient.get(`/notes/${noteId}`);
         setNote(response.data);
-      } catch {
-        setError('Failed to fetch note details.');
+      } catch (err) {
+        handleApiError(err, null, 'Failed to fetch note details.');
       } finally {
         setLoading(false);
       }
@@ -46,11 +47,10 @@ export default function NoteDetailPage() {
   const TabButton = ({ tabName, icon, label }) => (
     <button
       onClick={() => setActiveTab(tabName)}
-      className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-md transition ${
-        activeTab === tabName
-          ? 'bg-indigo-600 text-white'
-          : 'text-slate-600 hover:bg-slate-100'
-      }`}>
+      className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-md transition ${activeTab === tabName
+        ? 'bg-indigo-600 text-white'
+        : 'text-slate-600 hover:bg-slate-100'
+        }`}>
       {icon}
       {label}
     </button>
@@ -64,14 +64,14 @@ export default function NoteDetailPage() {
           Back to Dashboard
         </Link>
         <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200 mb-6">
-            <h1 className="text-2xl font-bold text-slate-900">Note Details</h1>
-            <p className="text-slate-600 mt-2 line-clamp-3">{note.textContent}</p>
+          <h1 className="text-2xl font-bold text-slate-900">Note Details</h1>
+          <p className="text-slate-600 mt-2 line-clamp-5">{note.textContent}</p>
         </div>
 
         <div className="flex items-center gap-2 p-2 bg-slate-100 rounded-lg mb-6">
-            <TabButton tabName="summary" icon={<BrainCircuit size={16} />} label="Summary" />
-            <TabButton tabName="flashcards" icon={<Layers size={16} />} label="Flashcards" />
-            <TabButton tabName="quiz" icon={<CheckSquare size={16} />} label="Quiz" />
+          <TabButton tabName="summary" icon={<BrainCircuit size={16} />} label="Summary" />
+          <TabButton tabName="flashcards" icon={<Layers size={16} />} label="Flashcards" />
+          <TabButton tabName="quiz" icon={<CheckSquare size={16} />} label="Quiz" />
         </div>
 
         <div>{renderContent()}</div>

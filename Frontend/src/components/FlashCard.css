@@ -1,5 +1,5 @@
 .flashcard-container {
-  perspective: 1000px; /* This creates the 3D space for the flip */
+  perspective: 1000px;
   width: 100%;
   height: 300px;
   cursor: pointer;
@@ -10,15 +10,15 @@
   height: 100%;
   position: relative;
   transition: transform 0.6s ease;
-  transform-style: preserve-3d; /* This is essential for the 3D effect */
+  transform-style: preserve-3d;
 }
 
 .flashcard-face {
   position: absolute;
   width: 100%;
   height: 100%;
-  -webkit-backface-visibility: hidden; /* Safari */
-  backface-visibility: hidden; /* Hide the back of the card when it's not facing the user */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,16 +30,21 @@
 }
 
 .flashcard-front {
-  background-color: #f8fafc; /* slate-50 */
-  color: #1e293b; /* slate-800 */
+  background-color: #f8fafc;
+  /* slate-50 */
+  color: #1e293b;
+  /* slate-800 */
   font-size: 1.25rem;
   font-weight: 600;
 }
 
 .flashcard-back {
-  background-color: #f1f5f9; /* slate-100 */
-  color: #475569; /* slate-600 */
-  transform: rotateY(180deg); /* Start with the back face already rotated */
+  background-color: #f1f5f9;
+  /* slate-100 */
+  color: #475569;
+  /* slate-600 */
+  transform: rotateY(180deg);
+  /* Start with the back face already rotated */
 }
 
 .flashcard.is-flipped {

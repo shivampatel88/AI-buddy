@@ -3,11 +3,8 @@ import { generateQuiz, getUserQuizzes, submitQuiz } from '../controllers/quizCon
 import { authMiddleware } from '../middlewares/auth.js';
 
 const router = Router();
-
-router.use(authMiddleware);
-
-router.post('/generate', generateQuiz);
-router.get('/', getUserQuizzes);
-router.post('/submit', submitQuiz); 
+router.post('/generate', authMiddleware, generateQuiz);
+router.get('/', authMiddleware, getUserQuizzes);
+router.post('/submit', authMiddleware, submitQuiz);
 
 export default router;

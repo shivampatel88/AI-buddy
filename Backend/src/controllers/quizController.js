@@ -2,48 +2,37 @@ import Quiz from "../models/Quiz.js";
 import Quizresults from "../models/Quizresults.js";
 import { callLLM } from "../utils/llmProvider.js";
 
-function extractJson(str) {
-    const match = str.match(/\[[\s\S]*\]|{[\s\S]*}/);
-    if (match) {
-        try {
-            return JSON.parse(match[0]);
-        } catch (e) {
-            return null;
-        }
-    }
-    return null;
-}
-
 export const generateQuiz = async (req, res) => {
   try {
-    const { noteId, notesText,count =10 } = req.body;
-    if (!notesText) {
-      return res.status(400).json({ message: "Notes text is required" });
-    }
-    
-    const prompt = `Create ${count} multiple-choice quiz questions from the following notes. ---${notesText}--- Format strictly in a valid JSON array: [{"question": "string", "options": ["string1","string2","string3","string4"], "answer": "string"}]`;
-    const llmResponse = await callLLM(prompt);
+    const { noteId, notesText, count } = req.body;
+    if (!notesText) return res.status(400).json({ message: "Notes text is required" });
 
-    const quizData = extractJson(llmResponse);
-    if (!quizData) {
-        return res.status(500).json({ message: "Failed to parse quiz data from AI.", rawResponse: llmResponse });
-    }
+    const prompt = `Generate ${count} multiple-choice questions. 
+    Return a JSON array of objects: 
+    [{"question": "...", "options": ["A", "B", "C", "D"], "answer": "The correct option string", "explanation": "Why it's correct"}]
+    
+    TEXT:
+    ${notesText}`;
+    const raw = await callLLM(prompt, { responseMimeType: "application/json" });
+    const quizData = JSON.parse(raw);
 
     const quiz = new Quiz({
-      user: req.user.id,noteId,questions: quizData,
+      user: req.user,
+      noteId,
+      questions: quizData,
     });
     await quiz.save();
 
     res.status(201).json({ message: "Quiz generated successfully", quiz });
   } catch (error) {
-    console.error("Error generating quiz:", error.message);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error generating quiz:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
 export const getUserQuizzes = async (req, res) => {
   try {
-    const quizzes = await Quiz.find({ user: req.user.id }).populate("noteId");
+    const quizzes = await Quiz.find({ user: req.user }).populate("noteId");
     res.json(quizzes);
   } catch (error) {
     console.error("Error fetching quizzes:", error.message);
@@ -53,38 +42,37 @@ export const getUserQuizzes = async (req, res) => {
 
 export const submitQuiz = async (req, res) => {
   try {
-    const { quizId, userAnswers } = req.body; 
-    const user = req.user.id;
+    const { quizId, userAnswers } = req.body;
 
     const quiz = await Quiz.findById(quizId);
-    if (!quiz) {
-      return res.status(404).json({ message: 'Quiz not found.' });
-    }
+    if (!quiz) return res.status(404).json({ message: 'Quiz not found.' });
 
     let score = 0;
-    quiz.questions.forEach(correctQuestion => {
-      const userAnswer = userAnswers.find(ua => ua.questionId.toString() === correctQuestion._id.toString());
-      if (userAnswer && userAnswer.answer === correctQuestion.answer) {
+
+    for (const question of quiz.questions) {
+      const userAnswer = userAnswers.find(ua => ua.questionId === question._id.toString());
+
+      if (userAnswer && userAnswer.answer === question.answer) {
         score++;
       }
-    });
+    }
 
-    const quizResult = new Quizresults({
-      user: user,
+    const result = new Quizresults({
+      user: req.user,
       quiz: quizId,
-      score,
+      score: score,
       totalQuestions: quiz.questions.length,
     });
-    await quizResult.save();
+    await result.save();
 
     res.status(200).json({
       message: 'Quiz submitted successfully!',
-      score: quizResult.score,
-      totalQuestions: quizResult.totalQuestions,
+      score: result.score,
+      totalQuestions: result.totalQuestions,
     });
 
   } catch (error) {
-    console.error('Error submitting quiz:', error.message);
+    console.error('Error submitting quiz:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
