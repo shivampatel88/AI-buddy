@@ -7,9 +7,7 @@ import UploadModal from '../components/UploadModal';
 import { handleApiError } from '../utils/errorHandler';
 import GenQuizzes from '../components/GenQuizzes';
 import QuizView from '../components/QuizView';
-import logo from '../assets/logo.svg';
-
-
+import logo from '../assets/logo1.jpg';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
