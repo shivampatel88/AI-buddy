@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { summarize, flashcards } from '../controllers/AiController.js';
+import { summarize, flashcards, summarizeStream } from '../controllers/AiController.js';
 import { authMiddleware } from '../middlewares/auth.js';
 
 const router = Router();
@@ -10,5 +10,7 @@ const validateText = [
 
 router.post('/summarize', authMiddleware, validateText, summarize);
 router.post('/flashcards', authMiddleware, validateText, flashcards);
+
+router.post('/summarizeStream', authMiddleware, validateText, summarizeStream);
 
 export default router;
