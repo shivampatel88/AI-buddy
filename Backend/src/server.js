@@ -9,6 +9,7 @@ import authRoutes from './routes/authRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
+import flashcardRoutes from './routes/flashcardRoutes.js';
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notes', notesRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/quizzes', quizRoutes);
+app.use('/api/flashcards', flashcardRoutes);
 
 app.use(globalErrorHandler);  // Global Error Handler
 

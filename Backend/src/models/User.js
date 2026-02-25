@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
   quizzes: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Quiz"
+    }],
+  flashcards: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Flashcard"
     }]
 }, { timestamps: true });
 

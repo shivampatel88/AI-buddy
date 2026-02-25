@@ -1,4 +1,6 @@
 import { callLLM,callStream } from "../utils/llmProvider.js";
+import Flashcard from "../models/Flashcard.js";
+import User from "../models/User.js";
 
 export async function summarize(req, res) {
   try {
@@ -23,11 +25,31 @@ export async function summarize(req, res) {
 export async function flashcards(req, res) {
   try {
     const { text, count = 10 } = req.body;
+    const userId = req.user; // from authMiddleware
+    
+    // Prompt Gemini for flashcards
     const prompt = `Create ${count} flashcards. Return a JSON array of objects with keys "q" (question) and "a" (answer). Content:\n${text}`;
 
     const raw = await callLLM(prompt, { responseMimeType: "application/json" });
     const cards = JSON.parse(raw);
-    res.json({ cards });
+    
+    // Prepare documents to be saved
+    const flashcardDocs = cards.map(c => ({
+      user: userId,
+      question: c.q,
+      answer: c.a
+    }));
+
+    // Bulk insert the flashcards
+    const savedCards = await Flashcard.insertMany(flashcardDocs);
+    const cardIds = savedCards.map(c => c._id);
+
+    // Link flashcards to the user
+    await User.findByIdAndUpdate(userId, {
+      $push: { flashcards: { $each: cardIds } }
+    });
+
+    res.json({ cards: savedCards });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: e.message });
